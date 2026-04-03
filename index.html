@@ -32,6 +32,9 @@
       --move-down: #f08080;
       --move-even: #6a7a90;
       --row-hover: rgba(255, 255, 255, 0.03);
+      --header-bar-bg: #142536;
+      --header-bar-border: #1f3550;
+      --header-bar-text: #c5d4e8;
     }
 
     [data-theme="light"] {
@@ -50,6 +53,9 @@
       --move-down: #c53030;
       --move-even: #7a8799;
       --row-hover: rgba(0, 0, 0, 0.04);
+      --header-bar-bg: #1e3a5c;
+      --header-bar-border: #2d5080;
+      --header-bar-text: #e8eef6;
     }
 
     * {
@@ -64,6 +70,38 @@
       color: var(--text);
       line-height: 1.5;
       transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    .site-header {
+      background: var(--header-bar-bg);
+      border-bottom: 1px solid var(--header-bar-border);
+    }
+
+    .site-header__inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0.55rem 1rem;
+    }
+
+    .site-header__tagline {
+      margin: 0;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--header-bar-text);
+      text-align: center;
+    }
+
+    .site-header__tagline a {
+      color: inherit;
+      text-decoration: none;
+      transition: opacity 0.15s ease, color 0.15s ease;
+    }
+
+    .site-header__tagline a:hover {
+      opacity: 0.88;
+      color: var(--accent);
     }
 
     .wrap {
@@ -123,6 +161,25 @@
 
     .promo--bottom {
       margin: 1.5rem 0 0;
+    }
+
+    .promo--graphic {
+      padding: 0;
+      overflow: hidden;
+      background: var(--surface-2);
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .promo__graphic {
+      display: block;
+      width: 100%;
+      height: auto;
+      vertical-align: middle;
+      object-fit: cover;
+      max-height: min(360px, 50vh);
     }
 
     .promo__badge {
@@ -669,16 +726,22 @@
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <p class="site-header__tagline">
+        <a href="https://gamelayer.co" target="_blank" rel="noopener noreferrer">Powered by GameLayer</a>
+      </p>
+    </div>
+  </header>
+
   <div class="wrap">
-    <aside class="promo" aria-label="Promotion">
-      <span class="promo__badge">Featured</span>
-      <div class="promo__body">
-        <p class="promo__title">Join the pride — compete weekly</p>
-        <p class="promo__text">Climb the board, earn bragging rights, and see how you stack up against fellow members. Rankings update live from GameLayer.</p>
-      </div>
-      <div class="promo__cta">
-        <a class="btn" href="#leaderboard-panel">View leaderboard</a>
-      </div>
+    <aside class="promo promo--graphic" aria-label="Promotion">
+      <img
+        class="promo__graphic"
+        src="banner.png"
+        decoding="async"
+        alt="Lions Club leaderboard — compete weekly with rankings powered by GameLayer."
+      />
     </aside>
 
     <div class="theme-bar">
