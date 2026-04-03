@@ -1,0 +1,7 @@
+{
+  "name": "lions-club-web",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes serve -l 5173 ."
+  }
+}

@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leaderboard — Lions Club</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <script>
+    try {
+      if (localStorage.getItem("lc-theme") === "light")
+        document.documentElement.setAttribute("data-theme", "light");
+    } catch (e) {}
+  </script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a222d;
+      --surface-2: #232d3b;
+      --border: #2e3a4d;
+      --text: #e8edf4;
+      --muted: #8b9cb3;
+      --accent: #c9a227;
+      --accent-dim: #8f7519;
+      --success: #3d9a6a;
+      --banner-grad: linear-gradient(105deg, #1e3a5f 0%, #0f2840 40%, #2a1f0a 100%);
+      --radius: 12px;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+      --btn-on-accent: #0f1419;
+      --move-up: #5ecf8f;
+      --move-down: #f08080;
+      --move-even: #6a7a90;
+      --row-hover: rgba(255, 255, 255, 0.03);
+    }
+
+    [data-theme="light"] {
+      --bg: #e8ecf2;
+      --surface: #ffffff;
+      --surface-2: #f0f3f8;
+      --border: #c8d0dc;
+      --text: #1a2332;
+      --muted: #5a6b80;
+      --accent: #a67c00;
+      --accent-dim: #8a6600;
+      --banner-grad: linear-gradient(105deg, #d4e4f7 0%, #b8cce8 45%, #f0e6c8 100%);
+      --shadow: 0 10px 36px rgba(26, 35, 50, 0.12);
+      --btn-on-accent: #1a2332;
+      --move-up: #1d8f4a;
+      --move-down: #c53030;
+      --move-even: #7a8799;
+      --row-hover: rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 2.5rem;
+    }
+
+    .theme-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 0.75rem;
+    }
+
+    .theme-toggle {
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--surface-2);
+    }
+
+    .theme-toggle:active {
+      transform: scale(0.98);
+    }
+
+    .theme-toggle__icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .promo {
+      background: var(--banner-grad);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin: 0 0 1.5rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1.25rem;
+    }
+
+    .promo--bottom {
+      margin: 1.5rem 0 0;
+    }
+
+    .promo__badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      background: rgba(201, 162, 39, 0.12);
+    }
+
+    .promo__body {
+      flex: 1 1 200px;
+    }
+
+    .promo__title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin: 0 0 0.2rem;
+    }
+
+    .promo__text {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .promo__cta {
+      flex-shrink: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: var(--accent);
+      color: var(--btn-on-accent);
+      text-decoration: none;
+      transition: filter 0.15s ease, transform 0.15s ease;
+    }
+
+    .btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn--ghost:hover:not(:disabled) {
+      background: var(--surface-2);
+      filter: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.25rem 1.5rem;
+      box-shadow: var(--shadow);
+      transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .panel__head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel__head-main {
+      flex: 1 1 200px;
+    }
+
+    .panel__status {
+      font-size: 0.85rem;
+      color: var(--muted);
+      align-self: flex-start;
+      white-space: nowrap;
+    }
+
+    .panel__status.status--error {
+      color: #e07a7a;
+    }
+
+    .panel__title {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    .panel__desc {
+      margin: 0.35rem 0 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 36rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .meta span strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .lb-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 0.75rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .lb-toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .lb-toggle {
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .lb-toggle:hover {
+      color: var(--text);
+      border-color: #3d4f66;
+    }
+
+    .lb-toggle--active {
+      border-color: var(--accent);
+      background: rgba(201, 162, 39, 0.18);
+      color: var(--accent);
+    }
+
+    .team-picker {
+      flex: 0 0 auto;
+    }
+
+    .team-picker .field {
+      margin: 0;
+    }
+
+    .team-picker .field.field--inline {
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      gap: 0.65rem;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+
+    .team-picker select {
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.45rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      min-width: 14rem;
+      max-width: 100%;
+    }
+
+    label.field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    label.field--inline {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      text-transform: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    input[type="number"] {
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.45rem 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      width: 4.25rem;
+      min-width: unset;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 0 0.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th,
+    td {
+      padding: 0.65rem 1.05rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--surface-2);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody td {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background: var(--row-hover);
+    }
+
+    .rank {
+      font-weight: 700;
+      color: var(--accent);
+      width: 4.25rem;
+    }
+
+    th.rank,
+    td.rank {
+      padding-left: 1.5rem;
+      padding-right: 1.35rem;
+    }
+
+    td.rank {
+      font-size: clamp(1.35rem, 3.8vw, 2rem);
+      line-height: 1.15;
+    }
+
+    th.rank {
+      font-size: 0.82rem;
+    }
+
+    .score {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    th.score-head,
+    td.score {
+      padding-left: 1.35rem;
+      padding-right: 1.5rem;
+    }
+
+    td.score {
+      font-size: clamp(1.35rem, 3.8vw, 2rem);
+      line-height: 1.15;
+      font-weight: 700;
+    }
+
+    th.score-head {
+      font-size: 0.82rem;
+    }
+
+    .cell-player,
+    th.player-head {
+      text-align: left;
+    }
+
+    th.player-head {
+      padding-left: calc(1.05rem + 2.1rem + 0.5rem);
+    }
+
+    .cell-player {
+      min-width: 10rem;
+    }
+
+    .player-cell {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.5rem;
+    }
+
+    .rank-move {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.1rem;
+      flex-shrink: 0;
+    }
+
+    .rank-move__glyph {
+      display: block;
+      font-size: 1.45rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--move-even);
+    }
+
+    .rank-move--up .rank-move__glyph {
+      color: var(--move-up);
+      animation: rankNudgeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .rank-move--down .rank-move__glyph {
+      color: var(--move-down);
+      animation: rankNudgeDown 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .rank-move--even .rank-move__glyph {
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes rankNudgeUp {
+      0% {
+        transform: translateY(10px) scale(0.85);
+        opacity: 0.35;
+      }
+      60% {
+        transform: translateY(-3px) scale(1.08);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes rankNudgeDown {
+      0% {
+        transform: translateY(-10px) scale(0.85);
+        opacity: 0.35;
+      }
+      60% {
+        transform: translateY(3px) scale(1.08);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .player-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .player-name {
+      font-weight: 600;
+      font-size: clamp(1.1rem, 2.6vw, 1.45rem);
+      line-height: 1.25;
+      text-align: left;
+    }
+
+    .team-name {
+      font-weight: 600;
+      font-size: clamp(0.88rem, 1.9vw, 1.05rem);
+      line-height: 1.3;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--muted);
+    }
+
+    .pagination {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .pagination__main {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .pagination__nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pagination__pages {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-items: center;
+    }
+
+    .pagination__size {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .page-btn {
+      min-width: 2.25rem;
+      height: 2.25rem;
+      padding: 0 0.5rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      background: var(--border);
+    }
+
+    .page-btn--active {
+      border-color: var(--accent);
+      background: rgba(201, 162, 39, 0.15);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .skeleton {
+      animation: pulse 1.2s ease-in-out infinite;
+      background: var(--surface-2);
+      border-radius: 6px;
+      height: 1rem;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.85; }
+    }
+
+    @media (max-width: 600px) {
+      .panel__head {
+        flex-direction: column;
+      }
+
+      .panel__status {
+        white-space: normal;
+      }
+
+      th:nth-child(3),
+      td:nth-child(3) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <aside class="promo" aria-label="Promotion">
+      <span class="promo__badge">Featured</span>
+      <div class="promo__body">
+        <p class="promo__title">Join the pride — compete weekly</p>
+        <p class="promo__text">Climb the board, earn bragging rights, and see how you stack up against fellow members. Rankings update live from GameLayer.</p>
+      </div>
+      <div class="promo__cta">
+        <a class="btn" href="#leaderboard-panel">View leaderboard</a>
+      </div>
+    </aside>
+
+    <div class="theme-bar">
+      <button
+        type="button"
+        class="theme-toggle"
+        id="theme-toggle"
+        aria-label="Toggle color theme"
+      >
+        <span class="theme-toggle__icon" id="theme-toggle-icon" aria-hidden="true">☀️</span>
+        <span id="theme-toggle-label">Light mode</span>
+      </button>
+    </div>
+
+    <main class="panel" id="leaderboard-panel">
+      <div class="panel__head">
+        <div class="panel__head-main">
+          <h1 class="panel__title" id="lb-title">Leaderboard</h1>
+          <p class="panel__desc" id="lb-desc">Loading…</p>
+          <div class="meta" id="lb-meta" hidden></div>
+        </div>
+        <span class="panel__status" id="status" aria-live="polite"></span>
+      </div>
+
+      <div class="lb-controls">
+        <div
+          class="lb-toggles"
+          id="lb-toggles"
+          role="tablist"
+          aria-label="Choose leaderboard"
+        ></div>
+        <div class="team-picker" id="team-picker" hidden>
+          <label class="field field--inline" for="team-select">
+            Select team
+            <select id="team-select" aria-label="Select team for TPvTP"></select>
+          </label>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="rank">Rank</th>
+              <th class="player-head">Player</th>
+              <th>Team</th>
+              <th class="score-head">Score</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <div class="pagination__main">
+          <div class="pagination__nav">
+            <button type="button" class="btn btn--ghost" id="prev-page" disabled>Previous</button>
+            <div class="pagination__pages" id="page-buttons" aria-label="Page"></div>
+            <button type="button" class="btn btn--ghost" id="next-page" disabled>Next</button>
+          </div>
+          <div class="pagination__size">
+            <label class="field field--inline" for="page-size">
+              Entries per page
+              <input type="number" id="page-size" min="1" max="100" value="10" />
+            </label>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="promo promo--bottom" aria-label="Promotion">
+      <span class="promo__badge">Community</span>
+      <div class="promo__body">
+        <p class="promo__title">Stay in the hunt</p>
+        <p class="promo__text">This page refreshes data every 15 seconds, aligned to each quarter-minute (:00, :15, :30, :45) — no need to reload. Check back after missions and events to see your new position.</p>
+      </div>
+      <div class="promo__cta">
+        <button type="button" class="btn btn--ghost" id="refresh-now">Refresh now</button>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function () {
+      var API_BASE = "https://api.gamelayer.co/api/v0";
+      var API_KEY = "20741415369e7b21451d162b79edc0e1";
+      var ACCOUNT = "test-steps";
+      var REFRESH_MS = 15 * 1000;
+
+      function msUntilNextAlignedSlot() {
+        var d = new Date();
+        var elapsed = d.getSeconds() * 1000 + d.getMilliseconds();
+        var remainder = elapsed % REFRESH_MS;
+        return REFRESH_MS - remainder;
+      }
+
+      function startAlignedRefreshLoop() {
+        function tick() {
+          if (document.visibilityState === "visible") refreshAll();
+          setTimeout(tick, REFRESH_MS);
+        }
+        setTimeout(tick, msUntilNextAlignedSlot());
+      }
+      var DEFAULT_AVATAR =
+        "https://images.gamelayer.co/glimages/default/defaultimg.png";
+
+      var el = {
+        themeToggle: document.getElementById("theme-toggle"),
+        themeToggleLabel: document.getElementById("theme-toggle-label"),
+        themeToggleIcon: document.getElementById("theme-toggle-icon"),
+        toggles: document.getElementById("lb-toggles"),
+        teamPicker: document.getElementById("team-picker"),
+        teamSelect: document.getElementById("team-select"),
+        pageSize: document.getElementById("page-size"),
+        title: document.getElementById("lb-title"),
+        desc: document.getElementById("lb-desc"),
+        meta: document.getElementById("lb-meta"),
+        rows: document.getElementById("rows"),
+        status: document.getElementById("status"),
+        prev: document.getElementById("prev-page"),
+        next: document.getElementById("next-page"),
+        pageButtons: document.getElementById("page-buttons"),
+        refreshNow: document.getElementById("refresh-now"),
+      };
+
+      var state = {
+        leaderboards: [],
+        currentId: null,
+        page: 0,
+        pageSize: 10,
+        totalPlayers: 0,
+        teamNames: {},
+        teamImages: {},
+        playerImages: {},
+        teamsList: [],
+        selectedTeamId: null,
+        loading: false,
+        lastError: null,
+        previousPageRanks: {},
+        rankHistoryCtx: null,
+      };
+
+      var THEME_STORAGE_KEY = "lc-theme";
+
+      function isLightTheme() {
+        return document.documentElement.getAttribute("data-theme") === "light";
+      }
+
+      function syncThemeToggle() {
+        var light = isLightTheme();
+        el.themeToggleLabel.textContent = light ? "Dark mode" : "Light mode";
+        el.themeToggleIcon.textContent = light ? "🌙" : "☀️";
+        el.themeToggle.setAttribute("aria-pressed", light ? "true" : "false");
+      }
+
+      function toggleTheme() {
+        if (isLightTheme()) {
+          document.documentElement.removeAttribute("data-theme");
+          try {
+            localStorage.setItem(THEME_STORAGE_KEY, "dark");
+          } catch (e) {}
+        } else {
+          document.documentElement.setAttribute("data-theme", "light");
+          try {
+            localStorage.setItem(THEME_STORAGE_KEY, "light");
+          } catch (e) {}
+        }
+        syncThemeToggle();
+      }
+
+      el.themeToggle.addEventListener("click", toggleTheme);
+      syncThemeToggle();
+
+      function headers() {
+        return {
+          "api-key": API_KEY,
+          Accept: "application/json",
+        };
+      }
+
+      function setStatus(text, isError) {
+        el.status.textContent = text || "";
+        el.status.classList.toggle("status--error", !!isError);
+      }
+
+      function escapeHtml(s) {
+        if (s == null) return "";
+        var d = document.createElement("div");
+        d.textContent = String(s);
+        return d.innerHTML;
+      }
+
+      function totalPages() {
+        var ps = Math.max(1, state.pageSize);
+        return Math.max(1, Math.ceil(state.totalPlayers / ps));
+      }
+
+      function currentSkip() {
+        return state.page * Math.max(1, state.pageSize);
+      }
+
+      function teamDisplayName(teamId) {
+        if (!teamId) return "—";
+        var n = state.teamNames[teamId];
+        return n != null && n !== "" ? n : teamId;
+      }
+
+      function getCurrentLeaderboardDef() {
+        for (var i = 0; i < state.leaderboards.length; i++) {
+          if (state.leaderboards[i].id === state.currentId)
+            return state.leaderboards[i];
+        }
+        return null;
+      }
+
+      function currentLeaderboardNeedsTeam() {
+        var lb = getCurrentLeaderboardDef();
+        return lb && lb.element === "teammembers";
+      }
+
+      function rankContextKey() {
+        return (
+          state.currentId +
+          "|" +
+          (currentLeaderboardNeedsTeam()
+            ? String(state.selectedTeamId || "")
+            : "")
+        );
+      }
+
+      function entryKey(r) {
+        if (r.player) return "p:" + r.player;
+        if (r.team) return "t:" + r.team;
+        return (
+          "x:" + String(r.rank) + ":" + String(r.name || r.player || "")
+        );
+      }
+
+      function rankMovement(prevRank, currRank) {
+        if (prevRank == null || prevRank === "") return "even";
+        var p = Number(prevRank);
+        var c = Number(currRank);
+        if (isNaN(p) || isNaN(c)) return "even";
+        if (c < p) return "up";
+        if (c > p) return "down";
+        return "even";
+      }
+
+      function rowAvatarUrl(r) {
+        if (r.player) {
+          var pu = state.playerImages[r.player];
+          return pu ? pu : DEFAULT_AVATAR;
+        }
+        if (r.team) {
+          var tu = state.teamImages[r.team];
+          return tu ? tu : DEFAULT_AVATAR;
+        }
+        return DEFAULT_AVATAR;
+      }
+
+      function renderToggles() {
+        el.toggles.innerHTML = state.leaderboards
+          .map(function (lb) {
+            var id = lb.id;
+            var active = id === state.currentId;
+            return (
+              '<button type="button" role="tab" class="lb-toggle' +
+              (active ? " lb-toggle--active" : "") +
+              '" data-id="' +
+              escapeHtml(id) +
+              '" aria-selected="' +
+              (active ? "true" : "false") +
+              '">' +
+              escapeHtml(lb.name || lb.id) +
+              "</button>"
+            );
+          })
+          .join("");
+      }
+
+      function updateToggleActive() {
+        var buttons = el.toggles.querySelectorAll(".lb-toggle");
+        for (var i = 0; i < buttons.length; i++) {
+          var b = buttons[i];
+          var id = b.getAttribute("data-id");
+          var on = id === state.currentId;
+          b.classList.toggle("lb-toggle--active", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        }
+      }
+
+      function renderRows(rows, prevRankMap) {
+        prevRankMap = prevRankMap || {};
+        if (!rows || rows.length === 0) {
+          el.rows.innerHTML =
+            '<tr><td colspan="4" class="empty">No scores on this page.</td></tr>';
+          return;
+        }
+        el.rows.innerHTML = rows
+          .map(function (r) {
+            var name = r.name || r.player || "—";
+            var avatar = rowAvatarUrl(r);
+            var teamLabel = teamDisplayName(r.team);
+            var key = entryKey(r);
+            var move = rankMovement(prevRankMap[key], r.rank);
+            var moveClass =
+              "rank-move" +
+              (move === "up"
+                ? " rank-move--up"
+                : move === "down"
+                  ? " rank-move--down"
+                  : " rank-move--even");
+            var glyph =
+              move === "up"
+                ? "\u2191"
+                : move === "down"
+                  ? "\u2193"
+                  : "\u2194";
+            var moveLabel =
+              move === "up"
+                ? "Moved up since last update"
+                : move === "down"
+                  ? "Moved down since last update"
+                  : "No movement since last update";
+            return (
+              "<tr>" +
+              '<td class="rank">' +
+              escapeHtml(r.rank) +
+              "</td>" +
+              '<td class="cell-player">' +
+              '<span class="player-cell">' +
+              '<span class="' +
+              moveClass +
+              '" title="' +
+              escapeHtml(moveLabel) +
+              '">' +
+              '<span class="rank-move__glyph" aria-hidden="true">' +
+              glyph +
+              "</span>" +
+              '<span class="visually-hidden">' +
+              escapeHtml(moveLabel) +
+              "</span>" +
+              "</span>" +
+              '<img class="player-avatar" src="' +
+              escapeHtml(avatar) +
+              '" alt="" width="40" height="40" loading="lazy" />' +
+              '<span class="player-name">' +
+              escapeHtml(name) +
+              "</span>" +
+              "</span></td>" +
+              "<td>" +
+              '<span class="team-name">' +
+              escapeHtml(teamLabel) +
+              "</span></td>" +
+              '<td class="score">' +
+              escapeHtml(r.scores) +
+              "</td>" +
+              "</tr>"
+            );
+          })
+          .join("");
+      }
+
+      function renderPagination() {
+        var tp = totalPages();
+        var p = Math.min(state.page, tp - 1);
+        if (p !== state.page) state.page = p;
+
+        el.prev.disabled = state.page <= 0 || state.loading;
+        el.next.disabled = state.page >= tp - 1 || state.loading;
+
+        var maxBtns = 7;
+        var start = Math.max(0, state.page - Math.floor(maxBtns / 2));
+        var end = Math.min(tp, start + maxBtns);
+        start = Math.max(0, end - maxBtns);
+
+        var html = "";
+        for (var i = start; i < end; i++) {
+          var active = i === state.page ? " page-btn--active" : "";
+          html +=
+            '<button type="button" class="page-btn' +
+            active +
+            '" data-page="' +
+            i +
+            '">' +
+            (i + 1) +
+            "</button>";
+        }
+        el.pageButtons.innerHTML = html;
+      }
+
+      function populateTeamSelect() {
+        if (!state.teamsList.length) {
+          el.teamSelect.innerHTML = "";
+          return;
+        }
+        el.teamSelect.innerHTML = state.teamsList
+          .map(function (t) {
+            return (
+              '<option value="' +
+              escapeHtml(t.id) +
+              '">' +
+              escapeHtml(t.name) +
+              "</option>"
+            );
+          })
+          .join("");
+        if (state.selectedTeamId && state.teamNames[state.selectedTeamId]) {
+          el.teamSelect.value = state.selectedTeamId;
+        } else {
+          state.selectedTeamId = state.teamsList[0].id;
+          el.teamSelect.value = state.selectedTeamId;
+        }
+      }
+
+      function updateTeamPickerVisibility() {
+        var show = currentLeaderboardNeedsTeam();
+        el.teamPicker.hidden = !show;
+        el.teamSelect.disabled = !show || state.teamsList.length === 0;
+      }
+
+      function ensureTeamForTpvtp() {
+        if (!currentLeaderboardNeedsTeam()) return;
+        if (!state.teamsList.length) return;
+        var ok =
+          state.selectedTeamId && state.teamNames[state.selectedTeamId];
+        if (!ok) state.selectedTeamId = state.teamsList[0].id;
+        if (el.teamSelect.options.length)
+          el.teamSelect.value = state.selectedTeamId;
+      }
+
+      async function fetchLeaderboardList() {
+        var url =
+          API_BASE +
+          "/leaderboards?account=" +
+          encodeURIComponent(ACCOUNT);
+        var res = await fetch(url, { headers: headers() });
+        if (!res.ok) throw new Error("Failed to load leaderboards (" + res.status + ")");
+        var data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error("No leaderboards returned for this account.");
+        }
+        return data;
+      }
+
+      async function loadReferenceData() {
+        var teamsUrl =
+          API_BASE + "/teams?account=" + encodeURIComponent(ACCOUNT);
+        var resT = await fetch(teamsUrl, { headers: headers() });
+        if (!resT.ok) throw new Error("Failed to load teams (" + resT.status + ")");
+        var teams = await resT.json();
+        state.teamNames = {};
+        state.teamImages = {};
+        state.teamsList = [];
+        if (Array.isArray(teams)) {
+          for (var ti = 0; ti < teams.length; ti++) {
+            var t = teams[ti];
+            if (t && t.id) {
+              state.teamNames[t.id] = t.name || t.id;
+              if (t.imgUrl) state.teamImages[t.id] = t.imgUrl;
+              state.teamsList.push({
+                id: t.id,
+                name: t.name || t.id,
+              });
+            }
+          }
+        }
+
+        state.playerImages = {};
+        var skip = 0;
+        var limit = 100;
+        while (true) {
+          var url =
+            API_BASE +
+            "/players?account=" +
+            encodeURIComponent(ACCOUNT) +
+            "&skip=" +
+            encodeURIComponent(String(skip)) +
+            "&limit=" +
+            encodeURIComponent(String(limit));
+          var res = await fetch(url, { headers: headers() });
+          if (!res.ok) throw new Error("Failed to load players (" + res.status + ")");
+          var chunk = await res.json();
+          if (!Array.isArray(chunk) || chunk.length === 0) break;
+          for (var pi = 0; pi < chunk.length; pi++) {
+            var p = chunk[pi];
+            if (p && p.player) state.playerImages[p.player] = p.imgUrl || "";
+          }
+          if (chunk.length < limit) break;
+          skip += limit;
+        }
+      }
+
+      async function fetchLeaderboardScores(id) {
+        var ps = Math.max(1, state.pageSize);
+        var url =
+          API_BASE +
+          "/leaderboards/" +
+          encodeURIComponent(id) +
+          "?account=" +
+          encodeURIComponent(ACCOUNT) +
+          "&skip=" +
+          encodeURIComponent(String(currentSkip())) +
+          "&limit=" +
+          encodeURIComponent(String(ps));
+        if (currentLeaderboardNeedsTeam() && state.selectedTeamId) {
+          url +=
+            "&team=" + encodeURIComponent(state.selectedTeamId);
+        }
+        var res = await fetch(url, { headers: headers() });
+        if (!res.ok) throw new Error("Failed to load scores (" + res.status + ")");
+        return res.json();
+      }
+
+      function applyLeaderboardMeta(lb) {
+        el.title.textContent = lb.name || "Leaderboard";
+        el.desc.textContent = lb.description || "";
+        el.meta.hidden = false;
+        el.meta.innerHTML =
+          "<span><strong>Period</strong> " +
+          escapeHtml(lb.period || "—") +
+          "</span>" +
+          "<span><strong>Element</strong> " +
+          escapeHtml(lb.element || "—") +
+          "</span>" +
+          "<span><strong>Players</strong> " +
+          escapeHtml(String(state.totalPlayers)) +
+          "</span>";
+      }
+
+      async function loadScores() {
+        if (!state.currentId || state.loading) return;
+
+        if (currentLeaderboardNeedsTeam()) {
+          if (!state.teamsList.length) {
+            setStatus("No teams available for TPvTP.", true);
+            el.rows.innerHTML =
+              '<tr><td colspan="4" class="empty">Could not load teams. Check the account or try Refresh.</td></tr>';
+            state.totalPlayers = 0;
+            renderPagination();
+            return;
+          }
+          ensureTeamForTpvtp();
+        }
+
+        state.loading = true;
+        setStatus("Loading…");
+        renderPagination();
+
+        try {
+          var payload = await fetchLeaderboardScores(state.currentId);
+          var lb = payload.leaderboard;
+          var scores = payload.scores || {};
+          state.totalPlayers =
+            Number(scores.totalPlayers) ||
+            Number(scores.totalTeams) ||
+            0;
+          applyLeaderboardMeta(lb);
+          var ctx = rankContextKey();
+          if (state.rankHistoryCtx !== ctx) {
+            state.previousPageRanks = {};
+            state.rankHistoryCtx = ctx;
+          }
+          var prevSnap = Object.assign({}, state.previousPageRanks);
+          var rowsData = scores.data || [];
+          renderRows(rowsData, prevSnap);
+          for (var ri = 0; ri < rowsData.length; ri++) {
+            var row = rowsData[ri];
+            state.previousPageRanks[entryKey(row)] = row.rank;
+          }
+          state.lastError = null;
+          var now = new Date();
+          setStatus(
+            "Updated " +
+              now.toLocaleTimeString(undefined, {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })
+          );
+        } catch (e) {
+          state.lastError = e;
+          setStatus(e.message || String(e), true);
+          el.rows.innerHTML =
+            '<tr><td colspan="4" class="empty">Could not load scores.</td></tr>';
+        } finally {
+          state.loading = false;
+          renderPagination();
+        }
+      }
+
+      async function refreshAll() {
+        try {
+          await loadReferenceData();
+        } catch (e) {
+          setStatus(
+            (e.message || String(e)) + " — using fallbacks where needed.",
+            true
+          );
+        }
+        populateTeamSelect();
+        updateTeamPickerVisibility();
+        ensureTeamForTpvtp();
+        await loadScores();
+      }
+
+      async function init() {
+        try {
+          state.leaderboards = await fetchLeaderboardList();
+          state.currentId = state.leaderboards[0].id;
+          state.page = 0;
+          state.pageSize = Math.min(
+            100,
+            Math.max(1, parseInt(el.pageSize.value, 10) || 10)
+          );
+          el.pageSize.value = String(state.pageSize);
+          renderToggles();
+          try {
+            await loadReferenceData();
+          } catch (e) {
+            setStatus(
+              (e.message || String(e)) + " — using fallbacks where needed.",
+              true
+            );
+          }
+          populateTeamSelect();
+          updateTeamPickerVisibility();
+          ensureTeamForTpvtp();
+          await loadScores();
+        } catch (e) {
+          el.desc.textContent = e.message || String(e);
+          setStatus("Setup failed", true);
+          el.toggles.innerHTML = "";
+        }
+      }
+
+      el.toggles.addEventListener("click", function (ev) {
+        var t = ev.target;
+        if (!t || !t.getAttribute || !t.hasAttribute("data-id")) return;
+        var id = t.getAttribute("data-id");
+        if (!id || id === state.currentId) return;
+        state.currentId = id;
+        state.page = 0;
+        updateToggleActive();
+        updateTeamPickerVisibility();
+        ensureTeamForTpvtp();
+        loadScores();
+      });
+
+      el.teamSelect.addEventListener("change", function () {
+        state.selectedTeamId = el.teamSelect.value;
+        state.page = 0;
+        loadScores();
+      });
+
+      el.pageSize.addEventListener("change", function () {
+        var v = parseInt(el.pageSize.value, 10);
+        state.pageSize = Math.min(100, Math.max(1, v || 10));
+        el.pageSize.value = String(state.pageSize);
+        state.page = 0;
+        loadScores();
+      });
+
+      el.prev.addEventListener("click", function () {
+        if (state.page > 0) {
+          state.page--;
+          loadScores();
+        }
+      });
+
+      el.next.addEventListener("click", function () {
+        if (state.page < totalPages() - 1) {
+          state.page++;
+          loadScores();
+        }
+      });
+
+      el.pageButtons.addEventListener("click", function (ev) {
+        var t = ev.target;
+        if (t && t.getAttribute && t.hasAttribute("data-page")) {
+          var p = parseInt(t.getAttribute("data-page"), 10);
+          if (!isNaN(p) && p !== state.page) {
+            state.page = p;
+            loadScores();
+          }
+        }
+      });
+
+      el.refreshNow.addEventListener("click", function () {
+        refreshAll();
+      });
+
+      init().finally(function () {
+        startAlignedRefreshLoop();
+      });
+    })();
+  </script>
+</body>
+</html>
